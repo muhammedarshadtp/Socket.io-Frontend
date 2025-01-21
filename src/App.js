@@ -9,11 +9,21 @@ function App() {
   const [messege,setMessege]=useState('')
   const [chat,setChat]=useState([])
 
+  const userName=nanoid(4)
+
 const sendChat = (e)=>{
   e.preventDefault()
-  socket.emit('chat',{messege})
+  socket.emit('chat',{messege,userName })
   setMessege('')
 }
+
+useEffect(()=>{
+  socket.on("chat",(payload)=>{
+    setChat([...chat,payload])  
+  },[])
+
+})
+
 
   return (
     <div className="App">
@@ -30,6 +40,9 @@ const sendChat = (e)=>{
           </input>
           <button type='submit'>sent</button>
         </form>
+        {chat.map((payload,index)=>{
+          return <p key={index} >{payload.messege}: <span>id:{payload.userName}</span></p>
+        })}
       </header>
     </div>
   );
